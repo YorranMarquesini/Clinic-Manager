@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Funcionários</title>
+  <link rel="stylesheet" href="dashboard-admin.css">
+</head>
+
+<body>
+  <div class="layout">
+    <!-- Sidebar retrátil -->
+    <aside class="sidebar" id="sidebar">
+      <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+      <h2>Menu</h2>
+      <a href="#" onclick="carregarConteudo('Adicionar')">➕ Adicionar Funcionário</a>
+      <a href="#" onclick="carregarConteudo('Remover')">➖ Remover Funcionário</a>
+      <a href="#" onclick="carregarConteudo('avisos')">📢 Avisos</a>
+    </aside>
+
+    <!-- Container principal -->
+    <div class="container">
+      <!-- Header -->
+       <header class="header">
+        <a href="dashboard-admin.html">
+          <img src="Imagens/Logo.png" alt="Logo do site" class="Logo">
+        </a>
+        <div class="header-right">
+          <div class="inbox" onclick="abrirInbox()">📩 Inbox</div>
+          <button class="btn-logout" onclick="logout()">Sair</button>
+        </div>
+      </header>
+
+      <!-- Conteúdo -->
+      <main>
+        <section class="welcome-section" id="conteudo">
+          <h1 class="txt-main">Bem-vindo à Clínica UNA</h1>
+          <p>Área principal do painel</p>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer>
+        <p>&copy; 2025 Clinica UNA. All rights reserved.</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Caixa de mensagens (modal) -->
+  <div class="modal" id="inboxModal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharInbox()">&times;</span>
+      <h2>📩 Inbox</h2>
+      <p><strong>Mensagem 1:</strong> Consulta confirmada.</p>
+      <p><strong>Mensagem 2:</strong> Novo paciente cadastrado.</p>
+      <p><strong>Mensagem 3:</strong> Agenda atualizada.</p>
+    </div>
+  </div>
+
+  <script src="dashboard-admin.js"></script>
+</body>
+</html>
