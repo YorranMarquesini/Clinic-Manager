@@ -77,17 +77,34 @@ function verPacientes() {
     pacientes = pacientes.filter(p => p.area === usuario.area);
 
     if (pacientes.length === 0) {
-        sub.innerHTML = `<div class="card"><p>Nenhum paciente cadastrado.</p></div>`;
-        return;
+        sub.innerHTML = `<div class="card"><p>Sem pacientes cadastrados.</p></div>`;
+    } else {
+        sub.innerHTML = `
+            <div class="card">
+                <h3>Lista de Pacientes</h3>
+                <ul>
+                    ${pacientes.map((p, index) => {
+                        // separar ano, mês e dia da string para evitar fuso horário
+                        const partes = p.nascimento.split("-");
+                        const ano = parseInt(partes[0]);
+                        const mes = parseInt(partes[1]) - 1;
+                        const dia = parseInt(partes[2]);
+                        const data = new Date(ano, mes, dia);
+                        const idade = calcularIdade(p.nascimento);
+
+                        return `
+                            <li>
+                                <span>${p.nome} - ${idade} anos (Nascimento: ${dia.toString().padStart(2,'0')}/${(mes+1).toString().padStart(2,'0')}/${ano})</span>
+                                <button onclick="removerPaciente(${index})">Remover</button>
+                            </li>
+                        `;
+                    }).join("")}
+                </ul>
+            </div>
+        `;
     }
-
-    let lista = pacientes.map((p, i) => `
-        <li>${p.nome} - ${p.idade} anos (Cadastrado por: ${p.cadastradoPor || "Desconhecido"}) 
-        <button onclick="removerPaciente(${i})">Remover</button></li>
-    `).join("");
-
-    sub.innerHTML = `<div class="card"><ul>${lista}</ul></div>`;
 }
+
 
 function cadastrarPaciente() {
     const sub = document.getElementById("subConteudo");
@@ -96,7 +113,7 @@ function cadastrarPaciente() {
             <h3>Adicionar Paciente</h3>
             <form id="formPaciente">
                 <input type="text" placeholder="Nome" id="nomePaciente" required>
-                <input type="number" placeholder="Idade" id="idadePaciente" required>
+                <input type="date" placeholder="Data de nascimento" id="nascimentoPaciente" required>
                 <button type="submit">Salvar</button>
             </form>
             <div id="msgPaciente"></div>
@@ -105,18 +122,43 @@ function cadastrarPaciente() {
 
     document.getElementById("formPaciente").addEventListener("submit", function(e){
         e.preventDefault();
-        const nome = document.getElementById("nomePaciente").value;
-        const idade = document.getElementById("idadePaciente").value;
+        const nome = document.getElementById("nomePaciente").value.trim();
+        const nascimento = document.getElementById("nascimentoPaciente").value;
         const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
 
+        if (!nome || !nascimento) {
+            document.getElementById("msgPaciente").innerHTML = "<p style='color:red'>⚠️ Preencha todos os campos!</p>";
+            return;
+        }
+
+        // separar ano, mês e dia para evitar problemas de fuso horário
+        const partes = nascimento.split("-");
+        const ano = parseInt(partes[0]);
+        const mes = parseInt(partes[1]) - 1; // mês começa em 0
+        const dia = parseInt(partes[2]);
+
+        // criar data corretamente
+        const data = new Date(ano, mes, dia);
+
+        // gerar senha DDMMYY
+        const senha = ("0" + data.getDate()).slice(-2) + ("0" + (data.getMonth() + 1)).slice(-2) + String(data.getFullYear()).slice(-2);
+
         let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
-        pacientes.push({ nome, idade, area: usuario.area, cadastradoPor: usuario.nome });
+        pacientes.push({
+            nome,
+            nascimento,
+            area: usuario.area,
+            cadastradoPor: usuario.nome,
+            login: nome.toLowerCase(),
+            senha: senha
+        });
         localStorage.setItem("pacientes", JSON.stringify(pacientes));
 
-        document.getElementById("msgPaciente").innerHTML = "<p style='color:green'>Paciente cadastrado!</p>";
+        document.getElementById("msgPaciente").innerHTML = `<p style='color:green'>✅ Paciente cadastrado! Login: ${nome.toLowerCase()}, Senha: ${senha}</p>`;
         document.getElementById("formPaciente").reset();
     });
 }
+
 
 function removerPaciente(index) {
     let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
@@ -134,6 +176,19 @@ function removerPaciente(index) {
 
         verPacientes();
     }
+}
+
+// -------------------- Calculo de Idade --------------------
+function calcularIdade(dataNasc) {
+    const hoje = new Date();
+    const nascimento = new Date(dataNasc);
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const mes = hoje.getMonth() - nascimento.getMonth();
+
+    if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+        idade--;
+    }
+    return idade;
 }
 
 // -------------------- Agendamentos --------------------
@@ -182,7 +237,33 @@ function cadastrarAgendamento() {
         return;
     }
 
-    let options = pacientesArea.map(p => `<option value="${p.nome}">${p.nome}</option>`).join("");
+    let optionsPacientes = pacientesArea.map(p => `<option value="${p.nome}">${p.nome}</option>`).join("");
+
+    // Gera lista de horários disponíveis
+    function gerarHorariosDisponiveis(dataSelecionada) {
+        const agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
+        const agendamentosMedico = agendamentos.filter(a => a.medico === usuario.nome);
+
+        let horarios = [];
+        for (let h = 6; h < 22; h++) {
+            for (let m of [0, 30]) {
+                const hora = new Date(dataSelecionada);
+                hora.setHours(h, m, 0, 0);
+
+                // verifica se já existe agendamento para esse médico nesse horário
+                const ocupado = agendamentosMedico.some(a => {
+                    const agData = new Date(a.data);
+                    return agData.getTime() === hora.getTime();
+                });
+
+                if (!ocupado) {
+                    const label = hora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+                    horarios.push(`<option value="${hora.toISOString()}">${label}</option>`);
+                }
+            }
+        }
+        return horarios.join("");
+    }
 
     sub.innerHTML = `
         <div class="card">
@@ -191,20 +272,40 @@ function cadastrarAgendamento() {
                 <label>Paciente:</label>
                 <select id="pacienteAgendamento" required>
                     <option value="">Selecione o paciente</option>
-                    ${options}
+                    ${optionsPacientes}
                 </select>
-                <label>Data e horário:</label>
-                <input type="datetime-local" id="dataAgendamento" required>
+
+                <label>Data:</label>
+                <input type="date" id="dataAgendamento" required>
+
+                <label>Horário:</label>
+                <select id="horarioAgendamento" required>
+                    <option value="">Selecione a data primeiro</option>
+                </select>
+
                 <button type="submit">Salvar</button>
             </form>
             <div id="msgAgendamento"></div>
         </div>
     `;
 
+    // Atualiza os horários disponíveis quando selecionar a data
+    document.getElementById("dataAgendamento").addEventListener("change", function() {
+        const dataSelecionada = new Date(this.value);
+        const horarios = gerarHorariosDisponiveis(dataSelecionada);
+        document.getElementById("horarioAgendamento").innerHTML = horarios || "<option value=''>Sem horários disponíveis</option>";
+    });
+
+    // Salvar agendamento
     document.getElementById("formAgendamento").addEventListener("submit", function(e){
         e.preventDefault();
         const paciente = document.getElementById("pacienteAgendamento").value;
-        const data = document.getElementById("dataAgendamento").value;
+        const data = document.getElementById("horarioAgendamento").value;
+
+        if (!data) {
+            document.getElementById("msgAgendamento").innerHTML = "<p style='color:red'>⛔ Escolha um horário válido!</p>";
+            return;
+        }
 
         let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
         agendamentos.push({ paciente, data, area: usuario.area, medico: usuario.nome });
@@ -212,6 +313,7 @@ function cadastrarAgendamento() {
 
         document.getElementById("msgAgendamento").innerHTML = "<p style='color:green'>✅ Agendamento cadastrado!</p>";
         document.getElementById("formAgendamento").reset();
+        document.getElementById("horarioAgendamento").innerHTML = "<option value=''>Selecione a data primeiro</option>";
     });
 }
 

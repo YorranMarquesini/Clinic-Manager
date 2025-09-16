@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Paciente</title>
+    <link rel="stylesheet" href="Dash.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar do Paciente -->
+        <aside class="sidebar" id="sidebar">
+            <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+            <h2>Paciente</h2>
+            <a href="#" onclick="carregarConteudoPaciente('consultas')">📋 Minhas Consultas</a>
+            <a href="#" onclick="carregarConteudoPaciente('medicos')">🩺 Médicos Disponíveis</a>
+        </aside>
+
+        <!-- Container principal -->
+        <div class="container">
+            <!-- Header -->
+            <header class="header">
+                <a href="usuario.html">
+                    <img src="Imagens/Logo.png" alt="Logo do site" class="Logo">
+                </a>
+                <div class="header-right">
+                    <div class="inbox" onclick="abrirInbox()">📩 Inbox</div>
+                    <button class="btn-logout" onclick="logout()">Sair</button>
+                </div>
+            </header>
+
+            <!-- Conteúdo -->
+            <main>
+                <section id="conteudo" class="welcome-section">
+                    <h1 class="txt-main">Bem-vindo(a)!</h1>
+                    <p>Selecione uma opção no menu à esquerda.</p>
+                </section>
+            </main>
+
+            <!-- Footer -->
+            <footer>
+                <p>&copy; 2025 Clinica UNA. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="usuario.js"></script>
+</body>
+</html>

@@ -15,12 +15,19 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
     }
 
     // Procurar usuário que bate com login e senha
-    const usuarioLogado = usuarios.find(u => u.username === user && u.password === pass);
+    let usuarioLogado = usuarios.find(u => u.username === user && u.password === pass);
+    // se não achar no array de funcionários, procura nos pacientes
+     if (!usuarioLogado) {
+    const pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
+    usuarioLogado = pacientes.find(p => p.login === user && p.senha === pass);
+    if(usuarioLogado) usuarioLogado.tipo = "paciente";
+}
 if(usuarioLogado) {
     localStorage.setItem("usuarioLogado", JSON.stringify(usuarioLogado));
     if(usuarioLogado.tipo === "admin") window.location.href = "dashboard-admin.html";
-    else window.location.href = "DashBoard.html"; // funcionário logado
+    else if(usuarioLogado.tipo === "paciente") window.location.href = "usuario.html";
+    else window.location.href = "DashBoard.html"; // funcionário
 } else {
-        errorMsg.textContent = "Usuário ou senha incorretos!";
-    }
+    errorMsg.textContent = "Usuário ou senha incorretos!";
+}
 });
