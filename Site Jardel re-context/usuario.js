@@ -18,6 +18,92 @@ function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
 }
 
+// -------------------- Inbox Simplificado --------------------
+function listarMensagens() {
+    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+    let inbox = JSON.parse(localStorage.getItem("inboxMensagens")) || [];
+    return inbox.filter(msg => msg.destinatario === usuario.nome);
+}
+
+function adicionarMensagem(destinatario, remetente, tipo, texto) {
+    let inbox = JSON.parse(localStorage.getItem("inboxMensagens")) || [];
+    inbox.push({
+        id: Date.now().toString(),
+        destinatario,
+        remetente,
+        tipo,
+        texto,
+        data: new Date().toISOString()
+    });
+    localStorage.setItem("inboxMensagens", JSON.stringify(inbox));
+    atualizarIndicadorInbox();
+}
+
+function removerMensagem(id) {
+    let inbox = JSON.parse(localStorage.getItem("inboxMensagens")) || [];
+    inbox = inbox.filter(msg => msg.id !== id);
+    localStorage.setItem("inboxMensagens", JSON.stringify(inbox));
+    renderizarInbox();
+    atualizarIndicadorInbox();
+}
+
+function renderizarInbox() {
+    const mensagens = listarMensagens();
+    const container = document.getElementById("inboxDropdown");
+    if (!container) return;
+
+    if (mensagens.length === 0) {
+        container.innerHTML = `<p>Sem novas mensagens.</p>`;
+        return;
+    }
+
+    container.innerHTML = mensagens.map(msg => `
+        <div class="mensagem" onclick="removerMensagem('${msg.id}')">
+            <p><strong>${msg.remetente}</strong>: ${msg.texto}</p>
+            <small>${new Date(msg.data).toLocaleString('pt-BR')}</small>
+        </div>
+    `).join("");
+}
+
+function atualizarIndicadorInbox() {
+    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+    const inbox = JSON.parse(localStorage.getItem("inboxMensagens")) || [];
+    const naoLidas = inbox.filter(msg => msg.destinatario === usuario.nome).length;
+    const badge = document.getElementById("inboxBadge");
+    if (!badge) return;
+
+    if (naoLidas > 0) {
+        badge.textContent = naoLidas;
+        badge.style.display = "block"; // mostra o badge
+    } else {
+        badge.style.display = "none"; // esconde o badge
+    }
+}
+
+function abrirInbox() {
+    const dropdown = document.getElementById("inboxDropdown");
+    if (!dropdown) return;
+    dropdown.style.display = "block";
+    renderizarInbox();
+}
+
+function fecharInbox() {
+    const dropdown = document.getElementById("inboxDropdown");
+    if (dropdown) dropdown.style.display = "none";
+}
+
+// Fecha inbox clicando fora
+document.addEventListener("click", function(event) {
+    const inbox = document.querySelector(".inbox");
+    const dropdown = document.getElementById("inboxDropdown");
+    if (dropdown && !inbox.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.style.display = "none";
+    }
+});
+
+// Inicializa o badge de mensagens
+atualizarIndicadorInbox();
+
 // -------------------- Carregar conteúdo do paciente --------------------
 function carregarConteudoPaciente(secao) {
     const conteudo = document.getElementById("conteudo");
@@ -34,9 +120,9 @@ function carregarConteudoPaciente(secao) {
                 <div class="card">
                     <h3>Minhas Consultas</h3>
                     <ul>
-                        ${agendamentos.map(a => {
+                        ${agendamentos.map((a, idx) => {
                             const data = new Date(a.data).toLocaleString("pt-BR");
-                            return `<li>${data} - Dr(a). ${a.medico}</li>`;
+                            return `<li>${data} - Dr(a). ${a.medico} <button onclick="desmarcarConsulta(${idx})">Desmarcar</button></li>`;
                         }).join("")}
                     </ul>
                 </div>
@@ -53,9 +139,6 @@ function carregarConteudoPaciente(secao) {
             conteudo.innerHTML = `
                 <div class="cards-container">
                     ${medicos.map((m) => {
-                        const agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
-                        const agMedico = agendamentos.filter(a => a.medico === m.nome);
-
                         return `
                             <div class="card">
                                 <h3>Dr(a). ${m.nome}</h3>
@@ -100,15 +183,9 @@ function atualizarHorarios(inputDate, nomeMedico) {
             const dataHoraTemp = new Date(dataSelecionada);
             dataHoraTemp.setHours(h, mnt, 0, 0);
 
-            // Ignora horários passados somente se for hoje
             if (dataHoraTemp <= agora && dataHoraTemp.toDateString() === agora.toDateString()) continue;
 
-            // Verifica se horário já está ocupado
-            const ocupado = agMedico.some(a => {
-                const agData = new Date(a.data);
-                return agData.getTime() === dataHoraTemp.getTime();
-            });
-
+            const ocupado = agMedico.some(a => new Date(a.data).getTime() === dataHoraTemp.getTime());
             if (!ocupado) horarios.push(`${("0"+h).slice(-2)}:${("0"+mnt).slice(-2)}`);
         }
     }
@@ -118,8 +195,7 @@ function atualizarHorarios(inputDate, nomeMedico) {
         : "<option value=''>Sem horários disponíveis</option>";
 }
 
-
-// -------------------- Salvar Agendamento --------------------
+// -------------------- Marcar consulta --------------------
 function marcarConsulta(event, nomeMedico){
     event.preventDefault();
     const form = event.target;
@@ -134,19 +210,16 @@ function marcarConsulta(event, nomeMedico){
     const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
     let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
 
-    // cria a data completa com hora e minuto da seleção
     const [h, mnt] = horaInput.split(":");
-    const dataHora = new Date(dataInput);
-    dataHora.setHours(parseInt(h), parseInt(mnt), 0, 0);
+    const [ano, mes, dia] = dataInput.split("-").map(Number);
+    const dataHora = new Date(ano, mes - 1, dia, parseInt(h), parseInt(mnt), 0, 0);
 
-    // verifica se já existe conflito
     const conflito = agendamentos.some(a => a.medico === nomeMedico && new Date(a.data).getTime() === dataHora.getTime());
     if(conflito){
         alert("Este horário já está ocupado. Escolha outro.");
         return;
     }
 
-    // salva o agendamento
     agendamentos.push({
         paciente: usuario.nome,
         data: dataHora.toISOString(),
@@ -155,8 +228,34 @@ function marcarConsulta(event, nomeMedico){
     });
 
     localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
-    alert(`Consulta agendada com Dr(a). ${nomeMedico} em ${dataHora.toLocaleString("pt-BR")}`);
 
-    // atualiza a lista de médicos e os horários disponíveis
+    // ✅ Notificação para o médico
+    adicionarMensagem(nomeMedico, usuario.nome, "agendamento", 
+        `O paciente ${usuario.nome} marcou uma consulta com você em ${dataHora.toLocaleString("pt-BR")}`);
+    atualizarIndicadorInbox();
+
+    alert(`Consulta agendada com Dr(a). ${nomeMedico} em ${dataHora.toLocaleString("pt-BR")}`);
     carregarConteudoPaciente('medicos');
+}
+
+// -------------------- Desmarcar consulta --------------------
+function desmarcarConsulta(index) {
+    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+    let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
+    const agendamento = agendamentos.filter(a => a.paciente === usuario.nome)[index];
+
+    if (!agendamento) return;
+
+    if (confirm(`Deseja realmente desmarcar a consulta com Dr(a). ${agendamento.medico} em ${new Date(agendamento.data).toLocaleString("pt-BR")}?`)) {
+        agendamentos = agendamentos.filter(a => !(a.paciente === usuario.nome && a.data === agendamento.data && a.medico === agendamento.medico));
+        localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
+
+        // ✅ Notificação para o médico
+        adicionarMensagem(agendamento.medico, usuario.nome, "desmarcacao",
+            `O paciente ${usuario.nome} desmarcou a consulta em ${new Date(agendamento.data).toLocaleString("pt-BR")}`);
+
+        atualizarIndicadorInbox();
+        alert("Consulta desmarcada com sucesso!");
+        carregarConteudoPaciente('consultas');
+    }
 }

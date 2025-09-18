@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clinica UNA</title>
     <link rel="stylesheet" href="Dash.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 
 <body>
@@ -27,7 +28,12 @@
           <img src="Imagens/Logo.png" alt="Logo do site" class="Logo">
         </a>
         <div class="header-right">
-          <div class="inbox" onclick="abrirInbox()">📩 Inbox</div>
+          <div class="inbox-container">
+            <div class="inbox" onclick="abrirInbox()">
+              <img src="Imagens/envelope.png" alt="Inbox">Inbox <span id="inboxBadge"></span>
+            </div>
+            <div id="inboxDropdown" class="dropdown"></div>
+          </div>
           <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
       </header>
@@ -46,17 +52,8 @@
       </footer>
     </div>
   </div>
-
-  <!-- Caixa de mensagens (modal) -->
-  <div class="modal" id="inboxModal">
-    <div class="modal-content">
-      <span class="close" onclick="fecharInbox()">&times;</span>
-      <h2>📩 Inbox</h2>
-      <p><strong>Mensagem 1:</strong> Consulta confirmada.</p>
-      <p><strong>Mensagem 2:</strong> Novo paciente cadastrado.</p>
-      <p><strong>Mensagem 3:</strong> Agenda atualizada.</p>
-    </div>
-  </div>
-
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
   <script src="script.js"></script>
 </body>

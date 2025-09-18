@@ -75,10 +75,23 @@ function carregarConteudo(secao) {
         });
 
     } else if (secao === "Remover") {
-        let lista = funcionarios.map((f, i) => `
-            <li>${f.nome} (${f.username}) [${f.tipo}] - ${f.area} 
-            <button onclick="removerFuncionario(${i})">Remover</button></li>
-        `).join("");
+        let lista = funcionarios.map((f, i) => {
+            let tipoLabel = "";
+            if (f.tipo === "admin") {
+                tipoLabel = "Administrador";
+            } else if (f.tipo === "medico") {
+                tipoLabel = `Médico (${f.area})`;
+            } else {
+                tipoLabel = "Funcionário";
+            }
+
+            return `
+                <li>
+                    ${f.nome} (${f.username}) - ${tipoLabel}
+                    <button onclick="removerFuncionario(${i})">Remover</button>
+                </li>
+            `;
+        }).join("");
 
         if (!lista) lista = "<p>Nenhum funcionário cadastrado.</p>";
 
@@ -86,31 +99,35 @@ function carregarConteudo(secao) {
             <h2>➖ Remover Funcionário</h2>
             <ul>${lista}</ul>
         `;
+
     } else if (secao === "avisos") {
-    let avisos = JSON.parse(localStorage.getItem("avisos")) || [];
-    let lista = avisos.map((a, i) => `
-        <li>
-          ${a} 
-          <button onclick="removerAviso(${i})">Remover</button>
-        </li>
-    `).join("");
+        let avisos = JSON.parse(localStorage.getItem("avisos")) || [];
+        let lista = avisos.map((a, i) => `
+            <li>
+              ${a} 
+              <button onclick="removerAviso(${i})">Remover</button>
+            </li>
+        `).join("");
 
-    if (!lista) lista = "<p>Nenhum aviso cadastrado.</p>";
+        if (!lista) lista = "<p>Nenhum aviso cadastrado.</p>";
 
-    conteudo.innerHTML = `
-        <h2>📢 Gerenciar Avisos</h2>
-        <form id="formAviso">
-            <input type="text" id="novoAviso" placeholder="Digite o aviso" required>
-            <button type="submit">Adicionar</button>
-        </form>
-        <ul>${lista}</ul>
-    `;
+        conteudo.innerHTML = `
+            <h2>📢 Gerenciar Avisos</h2>
+            <form id="formAviso">
+                <input type="text" id="novoAviso" placeholder="Digite o aviso" required>
+                <button type="submit">Adicionar</button>
+            </form>
+            <ul>${lista}</ul>
+        `;
 
-    document.getElementById("formAviso").addEventListener("submit", function(e) {
-        e.preventDefault();
-        adicionarAviso();
-    });
-}
+        document.getElementById("formAviso").addEventListener("submit", function(e) {
+            e.preventDefault();
+            adicionarAviso();
+        });
+
+    } else if (secao === "Calendario") {
+        mostrarCalendario();
+    }
 
     // Destaque item ativo
     document.querySelectorAll(".sidebar a").forEach(link => link.classList.remove("active"));
@@ -130,9 +147,19 @@ function adicionarFuncionario() {
         return;
     }
 
-    funcionarios.push({ nome, username, password: senha, tipo, area });
+    // Áreas médicas
+    const areasMedicas = ["Odonto", "Nutrição", "Pediatria", "Fisioterapia", "Psicologia"];
+
+    // Se a área for médica, o tipo será sempre "medico"
+    let tipoFinal = tipo;
+    if (areasMedicas.includes(area)) {
+        tipoFinal = "medico";
+    }
+
+    funcionarios.push({ nome, username, password: senha, tipo: tipoFinal, area });
     localStorage.setItem("funcionarios", JSON.stringify(funcionarios));
 
+    // ✅ Mensagem de sucesso
     document.getElementById("msgAdicionar").innerHTML = "<p style='color:green'>Funcionário adicionado com sucesso!</p>";
     document.getElementById("formAdicionar").reset();
 }
@@ -160,6 +187,7 @@ function removerFuncionario(index) {
         carregarConteudo("Remover");
     }
 }
+
 // -------------------- Info Cards --------------------
 function adicionarAviso() {
     let avisos = JSON.parse(localStorage.getItem("avisos")) || [];
@@ -177,4 +205,68 @@ function removerAviso(index) {
     localStorage.setItem("avisos", JSON.stringify(avisos));
 
     carregarConteudo("avisos");
+}
+
+// -------------------- Calendário --------------------
+function mostrarCalendario() {
+    const conteudo = document.getElementById("conteudo");
+    let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
+
+    let hoje = new Date();
+    let mesAtual = hoje.getMonth();
+    let anoAtual = hoje.getFullYear();
+    const cores = ["#ffadad","#ffd6a5","#fdffb6","#caffbf","#9bf6ff","#a0c4ff","#bdb2ff","#ffc6ff"];
+
+    function renderizarCalendario(mes, ano) {
+        const primeiroDia = new Date(ano, mes, 1);
+        const ultimoDia = new Date(ano, mes + 1, 0);
+
+        let html = `<div class="card"><h3>Calendário - ${primeiroDia.toLocaleString('pt-BR', {month: 'long', year: 'numeric'})}</h3>
+                    <button onclick="alterarMes(-1)">&#8592; Mês Anterior</button>
+                    <button onclick="alterarMes(1)">Próximo Mês &#8594;</button>
+                    <table>
+                        <tr><th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th></tr>`;
+
+        let dia = 1;
+        for (let i = 0; i < 6; i++) {
+            html += "<tr>";
+            for (let j = 0; j < 7; j++) {
+                if ((i === 0 && j < primeiroDia.getDay()) || dia > ultimoDia.getDate()) {
+                    html += "<td></td>";
+                } else {
+                    const agsDoDia = agendamentos.filter(a => {
+                        const dataAg = new Date(a.data);
+                        return dataAg.getDate() === dia && dataAg.getMonth() === mes && dataAg.getFullYear() === ano;
+                    });
+
+                    if (agsDoDia.length > 0) {
+                        let detalhes = "<div class='detalhes'><ul>";
+                        agsDoDia.forEach((a, idx) => {
+                            const horario = new Date(a.data).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+                            const cor = cores[idx % cores.length];
+                            detalhes += `<li style="background-color:${cor}">${horario} - ${a.paciente} (Dr(a). ${a.medico} - ${a.area})</li>`;
+                        });
+                        detalhes += "</ul></div>";
+                        html += `<td class="agendado"><strong>${dia}</strong>${detalhes}</td>`;
+                    } else {
+                        html += `<td><strong>${dia}</strong></td>`;
+                    }
+                    dia++;
+                }
+            }
+            html += "</tr>";
+            if (dia > ultimoDia.getDate()) break;
+        }
+        html += "</table></div>";
+        conteudo.innerHTML = html;
+    }
+
+    window.alterarMes = function(delta) {
+        mesAtual += delta;
+        if (mesAtual < 0) { mesAtual = 11; anoAtual--; }
+        if (mesAtual > 11) { mesAtual = 0; anoAtual++; }
+        renderizarCalendario(mesAtual, anoAtual);
+    }
+
+    renderizarCalendario(mesAtual, anoAtual);
 }

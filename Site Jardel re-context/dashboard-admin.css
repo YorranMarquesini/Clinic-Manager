@@ -401,3 +401,167 @@ button:active, form button:active, #conteudo > button:active, #subConteudo .card
     transform: translateY(1px);
     box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
+
+/* -------------------- Calendário -------------------- */
+#conteudo .card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+  margin: 20px auto;
+  max-width: 900px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Título */
+#conteudo .card h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #c52b4f;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: capitalize;
+}
+
+/* Botões de navegação */
+#conteudo .card button {
+  background: #c52b4f;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin: 0 5px 15px 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+#conteudo .card button:hover {
+  background: #a2203d;
+}
+
+/* Estrutura da tabela */
+#conteudo table {
+  border-collapse: collapse;
+  width: 100%;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Cabeçalho (dias da semana) */
+#conteudo th {
+  background: #c52b4f;
+  color: white;
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Dias */
+#conteudo td {
+  border: 1px solid #eee;
+  height: 100px;
+  padding: 6px;
+  vertical-align: top;
+  text-align: left;
+  background: #fafafa;
+  position: relative;
+  transition: background 0.2s;
+}
+
+#conteudo td:hover {
+  background: #f2f2f2;
+  cursor: pointer;
+}
+
+/* Número do dia */
+#conteudo td strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #c52b4f;
+  font-weight: bold;
+}
+
+/* Dia com agendamento */
+#conteudo td.agendado {
+  background: #fde4ec;
+  border: 2px solid #e91e63;
+}
+
+#conteudo td.agendado strong {
+  color: #e91e63;
+}
+
+/* Tooltip de detalhes */
+#conteudo td .detalhes {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 5px;
+  background: #fff;
+  color: #000;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+  width: 250px;
+  z-index: 10;
+  font-size: 12px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Mostrar tooltip ao passar o mouse */
+#conteudo td.agendado:hover .detalhes {
+  display: block;
+}
+
+/* Itens dentro do tooltip */
+#conteudo td .detalhes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#conteudo td .detalhes li {
+  margin-bottom: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: #300101;
+  font-size: 12px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+}
+
+#conteudo td .detalhes li:last-child {
+  margin-bottom: 0;
+}
+
+/* Animação */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* -------- Responsividade -------- */
+@media (max-width: 768px) {
+  #conteudo .card {
+    padding: 12px;
+  }
+  #conteudo th, #conteudo td {
+    font-size: 12px;
+    padding: 4px;
+  }
+  #conteudo td {
+    height: 70px;
+  }
+  #conteudo td strong {
+    font-size: 11px;
+  }
+  #conteudo .card button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
