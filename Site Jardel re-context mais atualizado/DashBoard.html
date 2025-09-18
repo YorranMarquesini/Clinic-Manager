@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinica UNA</title>
+    <link rel="stylesheet" href="Dash.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+
+<body>
+  <div class="layout">
+    <!-- Sidebar retrátil -->
+    <aside class="sidebar" id="sidebar">
+      <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+      <h2>Menu</h2>
+      <a href="#" onclick="carregarConteudo('calendario')">📅 Calendário</a>
+      <a href="#" onclick="carregarConteudo('pacientes')">👥 Pacientes</a>
+      <a href="#" onclick="carregarConteudo('consultas')">📋 Agendamentos</a>
+    </aside>
+
+    <!-- Container principal -->
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <a href="dashboard.html">
+          <img src="Imagens/Logo.png" alt="Logo do site" class="Logo">
+        </a>
+        <div class="header-right">
+          <div class="inbox-container">
+            <div class="inbox" onclick="abrirInbox()">
+              <img src="Imagens/envelope.png" alt="Inbox">Inbox <span id="inboxBadge"></span>
+            </div>
+            <div id="inboxDropdown" class="dropdown"></div>
+          </div>
+          <button class="btn-logout" onclick="logout()">Sair</button>
+        </div>
+      </header>
+
+      <!-- Conteúdo -->
+      <main>
+        <section class="welcome-section" id="conteudo">
+          <h1 class="txt-main">Bem-vindo à Clínica UNA</h1>
+          <p>Área principal do painel</p>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer>
+        <p>&copy; 2025 Clinica UNA. All rights reserved.</p>
+      </footer>
+    </div>
+  </div>
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="script.js"></script>
+</body>
