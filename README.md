@@ -1,12 +1,10 @@
 # Clinic-Manager
 Se quiser modificar algo baixe a pasta e jogue-a no VsCode então faça as modificaçoes e depois um branch request
 
-Site Jardel é o primeiro projeto
+na branch backup fica o backup 1 versão anterior a qualquer modificação
 
-Site Jardel Ver 2 é o primeiro projeto com modificaçoes visuais
+na main o arquivo mais atualizado
 
-Site Jardel Re-context é o projeto depois que aprendemos o que realmente tinha que ser feito esta servindo como backup de 1 versão anterior
-
-Site Jardel Re-context mais atualizado é a ultima versõa do projeto (pode conter bugs e erros)
+e na old ver a versão antiga do projeto
 
 link do figma com design do site: https://www.figma.com/design/WYpUZYAJhRvvoHXVAlKqLr/Site-Projeto-Extens%C3%A3o?node-id=0-1&t=O0C53AzDRiUKqEBp-1
