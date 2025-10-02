@@ -1,0 +1,622 @@
+/* Fundo geral */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #e63950; /* vermelho base */
+    font-family: Arial, sans-serif;
+}
+
+/* Layout com sidebar */
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #c52b4f;
+    color: white;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s;
+    display: block;
+}
+
+.sidebar a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Container flutuante principal */
+.container {
+    flex: 1;
+    background-color: #f1f1f1; /* cinza flutuante */
+    border-radius: 12px;
+    margin: 20px;
+    padding: 20px 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.546);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+/* Logo */
+.Logo {
+    height: 60px;
+    object-fit: contain;
+}
+
+/* Conteúdo */
+.welcome-section {
+    text-align: center;
+    padding: 40px 20px;
+    color: inherit;
+}
+
+.txt-main {
+    font-size: 2em;
+    margin-bottom: 10px;
+    animation: fadeSlideUp 1s ease forwards;
+    color: #000000;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+}
+/* Clique na sidebar dá feedback */
+.sidebar a.active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Sidebar retrátil */
+.sidebar {
+  width: 220px;
+  background-color: #c52b4f;
+  color: white;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  transition: opacity 0.3s;
+}
+
+.sidebar.collapsed h2 {
+  opacity: 0;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background 0.3s, font-size 0.3s;
+  display: block;
+  white-space: nowrap;
+}
+
+.sidebar a:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar.collapsed a {
+  font-size: 0;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-logout {
+  padding: 8px 12px;
+  background-color: #c52b4f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.btn-logout:hover {
+  background-color: #a6233f;
+}
+
+/* --------- Seções de Conteúdo (Pacientes, Agendamento e Calendário) --------- */
+#subConteudo {
+  margin-top: 20px;
+}
+
+/* Caixas gerais */
+.card {
+  background: #fff;
+  padding: 18px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
+  animation: fadeIn 0.4s ease-in;
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #c52b4f;
+  font-size: 18px;
+}
+
+/* Formulários */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+form input,
+form select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+form input:focus,
+form select:focus {
+  border-color: #c52b4f;
+  box-shadow: 0 0 5px rgba(197,43,79,0.4);
+  outline: none;
+}
+
+form button {
+  align-self: flex-start;
+  background: #c52b4f;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+form button:hover {
+  background: #a6233f;
+}
+
+/* Lista de Pacientes e Agendamentos */
+#subConteudo ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#subConteudo li {
+  background: #fefefe;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.08);
+}
+
+#subConteudo li span {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+#subConteudo li button {
+  background: #e63946;
+  border: none;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  transition: background 0.2s;
+}
+
+#subConteudo li button:hover {
+  background: #c71c2c;
+}
+
+/* --------- Calendário --------- */
+#subConteudo table {
+  border-collapse: collapse;
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
+}
+
+#subConteudo th {
+  background: #c52b4f;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+#subConteudo td {
+  border: 1px solid #ddd;
+  height: 100px;
+  padding: 6px;
+  vertical-align: top;
+  position: relative;
+}
+
+#subConteudo td strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #c52b4f;
+}
+
+/* Agendamentos dentro do calendário */
+#subConteudo td ul {
+  padding: 0;
+  margin: 0;
+}
+
+#subConteudo td li {
+  background: #ffe3ea;
+  color: #a6233f;
+  font-size: 12px;
+  margin: 2px 0;
+  padding: 4px 6px;
+  border-radius: 6px;
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Animação de entrada */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Botões unificados ===== */
+button, form button, #conteudo > button, #subConteudo .card button, #subConteudo li button {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    background-color: #c52b4f; /* cor base */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* Hover */
+button:hover, form button:hover, #conteudo > button:hover, #subConteudo .card button:hover, #subConteudo li button:hover {
+    background-color: #a6233f; /* cor hover */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.25);
+}
+
+/* Active */
+button:active, form button:active, #conteudo > button:active, #subConteudo .card button:active, #subConteudo li button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* Botões de calendário específicos (mudar mês) com leve destaque */
+#subConteudo .card button {
+    background-color: #ff6b6b;
+}
+
+#subConteudo .card button:hover {
+    background-color: #e63950;
+}
+
+/* ===== Animação para todos os botões ===== */
+button, form button, #conteudo > button, #subConteudo .card button, #subConteudo li button {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Hover: levemente “levita” */
+button:hover, form button:hover, #conteudo > button:hover, #subConteudo .card button:hover, #subConteudo li button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+/* Active: efeito de clique */
+button:active, form button:active, #conteudo > button:active, #subConteudo .card button:active, #subConteudo li button:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* Dia com agendamento */
+td.agendado {
+    background-color: #e6939e; /* cor do dia com agendamento */
+    color: white;
+    border-radius: 5px;
+    vertical-align: top;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+/* Tooltip com agendamentos */
+td.agendado .detalhes {
+    display: none;
+    position: absolute;
+    top: 100%; /* aparece abaixo do dia */
+    left: 0;
+    background: #fff;
+    color: #000;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    width: 200px;
+    z-index: 10;
+    font-size: 12px;
+}
+
+/* Mostrar detalhes ao hover */
+td.agendado:hover .detalhes {
+    display: block;
+}
+
+/* Lista dentro do tooltip */
+td.agendado .detalhes ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+td.agendado .detalhes li {
+    margin-bottom: 6px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    color: white;
+    font-size: 12px;
+}
+
+td.agendado .detalhes li:last-child {
+    margin-bottom: 0;
+}
+
+/* Container da inbox */
+.inbox-container {
+    position: relative;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Botão da inbox */
+.inbox {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background-color: #fff;
+    border-radius: 30px; /* arredondado tipo cápsula */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-weight: bold;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.inbox:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-2px);
+}
+
+/* Ícone dentro da inbox */
+.inbox img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Badge de mensagens */
+#inboxBadge {
+    display: inline-block;
+    min-width: 18px;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(145deg, #ff4d4f, #ff7875);
+    border-radius: 50%;
+    text-align: center;
+    vertical-align: top;
+    margin-left: 5px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+#inboxBadge:hover {
+    transform: scale(1.3);
+}
+
+/* Dropdown da inbox */
+.dropdown {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background: #fff;
+    border-radius: 12px;
+    width: 320px;
+    max-height: 380px;
+    overflow-y: auto;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    padding: 10px 0;
+    display: none;
+    z-index: 100;
+}
+
+/* Mensagens dentro do dropdown */
+.dropdown .mensagem {
+    padding: 10px 14px;
+    margin: 0 10px 6px 10px;
+    border-radius: 10px;
+    border-left: 4px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.dropdown .mensagem.nao-lida {
+    background: #fff9e6;
+    border-left-color: #ffba00;
+    font-weight: 600;
+}
+
+.dropdown .mensagem:hover {
+    background-color: #ffe8b0;
+}
+
+.dropdown .mensagem small {
+    color: #888;
+    font-size: 11px;
+}
+
+/* Botão dentro da mensagem */
+.dropdown .mensagem button {
+    background-color: #ff4d4f;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    color: white;
+    transition: background 0.2s;
+}
+
+.dropdown .mensagem button:hover {
+    background-color: #c71c2c;
+}
+
+/* ====== Nota da consulta ====== */
+.nota-consulta {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
+  margin-top: 15px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.nota-consulta label {
+  font-weight: bold;
+  color: #c52b4f;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.nota-consulta textarea {
+  width: 100%;
+  min-height: 120px; /* maior para anotações longas */
+  resize: vertical;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.nota-consulta textarea:focus {
+  border-color: #c52b4f;
+  box-shadow: 0 0 6px rgba(197,43,79,0.35);
+  outline: none;
+}
+/* ====== Agendamentos passados ====== */
+.historicoAgendamentos {
+    margin-top: 10px;
+}
+
+.agendamentoCard {
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-top: 10px;
+}
+
+.agendamentoCard p {
+    margin: 3px 0;
+}
+
+.agendamentoCard textarea {
+    width: 100%;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 6px;
+    resize: vertical;
+}
+
+.agendamentoCard button {
+    margin-top: 6px;
+    background: #4caf50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.agendamentoCard button:hover {
+    background: #43a047;
+}
